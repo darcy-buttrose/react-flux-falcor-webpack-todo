@@ -9,10 +9,10 @@
  * TodoStore
  */
 
-var AppDispatcher = require('../dispatcher/AppDispatcher');
-var EventEmitter = require('events').EventEmitter;
-var TodoConstants = require('../constants/TodoConstants');
-var assign = require('object-assign');
+import AppDispatcher from '../dispatcher/AppDispatcher';
+import EventEmitter from 'events';
+import TodoConstants from '../constants/TodoConstants';
+import assign from 'object-assign';
 
 var CHANGE_EVENT = 'change';
 
@@ -115,6 +115,7 @@ var TodoStore = assign({}, EventEmitter.prototype, {
     this.removeListener(CHANGE_EVENT, callback);
   }
 });
+export default TodoStore;
 
 // Register callback to handle all updates
 AppDispatcher.register(function(action) {
@@ -170,5 +171,3 @@ AppDispatcher.register(function(action) {
       // no op
   }
 });
-
-module.exports = TodoStore;

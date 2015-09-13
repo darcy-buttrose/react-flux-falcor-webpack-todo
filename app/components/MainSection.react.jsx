@@ -7,29 +7,31 @@
  * of patent rights can be found in the PATENTS file in the same directory.
  */
 
-var React = require('react');
-var ReactPropTypes = React.PropTypes;
-var TodoActions = require('../actions/TodoActions');
-var TodoItem = require('./TodoItem.react');
+import React from 'react';
+import TodoActions from '../actions/TodoActions';
+import TodoItem from './TodoItem.react';
 
-var MainSection = React.createClass({
+export default class MainSection extends React.Component {
 
-  propTypes: {
-    allTodos: ReactPropTypes.object.isRequired,
-    areAllComplete: ReactPropTypes.bool.isRequired
-  },
+    constructor(props) {
+        super(props);
+        this.state = {
+            allTodos: props.allTodos,
+            areAllComplete: props.areAllComplete
+        }
+    }
 
   /**
    * @return {object}
    */
-  render: function() {
+  render() {
     // This section should be hidden by default
     // and shown when there are todos.
-    if (Object.keys(this.props.allTodos).length < 1) {
+    if (Object.keys(this.state.allTodos).length < 1) {
       return null;
     }
 
-    var allTodos = this.props.allTodos;
+    var allTodos = this.state.allTodos;
     var todos = [];
 
     for (var key in allTodos) {
@@ -41,22 +43,24 @@ var MainSection = React.createClass({
         <input
           id="toggle-all"
           type="checkbox"
-          onChange={this._onToggleCompleteAll}
-          checked={this.props.areAllComplete ? 'checked' : ''}
+          onChange={this._onToggleCompleteAll.bind(this)}
+          checked={this.state.areAllComplete ? 'checked' : ''}
         />
         <label htmlFor="toggle-all">Mark all as complete</label>
         <ul id="todo-list">{todos}</ul>
       </section>
     );
-  },
+  };
 
   /**
    * Event handler to mark all TODOs as complete
    */
-  _onToggleCompleteAll: function() {
+  _onToggleCompleteAll() {
     TodoActions.toggleCompleteAll();
-  }
+  };
+}
+MainSection.propTypes = {
+  allTodos: React.PropTypes.object.isRequired,
+  areAllComplete: React.PropTypes.bool.isRequired
+};
 
-});
-
-module.exports = MainSection;

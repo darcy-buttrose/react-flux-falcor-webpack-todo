@@ -8,9 +8,8 @@
  *
  * TodoActions
  */
-
-var AppDispatcher = require('../dispatcher/AppDispatcher');
-var TodoConstants = require('../constants/TodoConstants');
+import AppDispatcher from "../dispatcher/AppDispatcher";
+import TodoConstants from "../constants/TodoConstants";
 
 var TodoActions = {
 
@@ -81,5 +80,4 @@ var TodoActions = {
   }
 
 };
-
-module.exports = TodoActions;
+export default TodoActions;

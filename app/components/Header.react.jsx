@@ -7,27 +7,27 @@
  * of patent rights can be found in the PATENTS file in the same directory.
  */
 
-var React = require('react');
-var TodoActions = require('../actions/TodoActions');
-var TodoTextInput = require('./TodoTextInput.react');
+import React from 'react';
+import TodoActions from '../actions/TodoActions';
+import TodoTextInput from './TodoTextInput.react';
 
-var Header = React.createClass({
+export default class Header extends React.Component {
 
   /**
    * @return {object}
    */
-  render: function() {
+  render() {
     return (
       <header id="header">
         <h1>todos</h1>
         <TodoTextInput
           id="new-todo"
           placeholder="What needs to be done?"
-          onSave={this._onSave}
+          onSave={this._onSave.bind(this)}
         />
       </header>
     );
-  },
+  };
 
   /**
    * Event handler called within TodoTextInput.
@@ -35,13 +35,11 @@ var Header = React.createClass({
    * in different ways.
    * @param {string} text
    */
-  _onSave: function(text) {
+  _onSave(text) {
     if (text.trim()){
       TodoActions.create(text);
     }
+  };
 
-  }
+}
 
-});
-
-module.exports = Header;

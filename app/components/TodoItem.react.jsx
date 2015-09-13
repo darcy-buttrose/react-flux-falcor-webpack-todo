@@ -7,37 +7,33 @@
  * of patent rights can be found in the PATENTS file in the same directory.
  */
 
-var React = require('react');
-var ReactPropTypes = React.PropTypes;
-var TodoActions = require('../actions/TodoActions');
-var TodoTextInput = require('./TodoTextInput.react');
+import React from 'react';
+import TodoActions from '../actions/TodoActions';
+import TodoTextInput from './TodoTextInput.react';
+import classNames from 'classnames';
 
-var classNames = require('classnames');
+export default class TodoItem extends React.Component {
 
-var TodoItem = React.createClass({
-
-  propTypes: {
-   todo: ReactPropTypes.object.isRequired
-  },
-
-  getInitialState: function() {
-    return {
-      isEditing: false
-    };
-  },
+  constructor(props) {
+      super(props);
+    this.state = {
+      todo: props.todo,
+      isEditing: props.isEditing || false
+    }
+  }
 
   /**
    * @return {object}
    */
-  render: function() {
-    var todo = this.props.todo;
+  render() {
+    var todo = this.state.todo;
 
     var input;
     if (this.state.isEditing) {
       input =
         <TodoTextInput
           className="edit"
-          onSave={this._onSave}
+          onSave={this._onSave.bind(this)}
           value={todo.text}
         />;
     }
@@ -59,25 +55,25 @@ var TodoItem = React.createClass({
             className="toggle"
             type="checkbox"
             checked={todo.complete}
-            onChange={this._onToggleComplete}
+            onChange={this._onToggleComplete.bind(this)}
           />
-          <label onDoubleClick={this._onDoubleClick}>
+          <label onDoubleClick={this._onDoubleClick.bind(this)}>
             {todo.text}
           </label>
-          <button className="destroy" onClick={this._onDestroyClick} />
+          <button className="destroy" onClick={this._onDestroyClick.bind(this)} />
         </div>
         {input}
       </li>
     );
-  },
+  };
 
-  _onToggleComplete: function() {
-    TodoActions.toggleComplete(this.props.todo);
-  },
+  _onToggleComplete() {
+    TodoActions.toggleComplete(this.state.todo);
+  };
 
-  _onDoubleClick: function() {
+  _onDoubleClick() {
     this.setState({isEditing: true});
-  },
+  };
 
   /**
    * Event handler called within TodoTextInput.
@@ -85,15 +81,16 @@ var TodoItem = React.createClass({
    * in different ways.
    * @param  {string} text
    */
-  _onSave: function(text) {
-    TodoActions.updateText(this.props.todo.id, text);
+  _onSave(text) {
+    TodoActions.updateText(this.state.todo.id, text);
     this.setState({isEditing: false});
-  },
+  };
 
-  _onDestroyClick: function() {
-    TodoActions.destroy(this.props.todo.id);
-  }
+  _onDestroyClick() {
+    TodoActions.destroy(this.state.todo.id);
+  };
 
-});
-
-module.exports = TodoItem;
+}
+TodoItem.propTypes = {
+  todo: React.PropTypes.object.isRequired
+};

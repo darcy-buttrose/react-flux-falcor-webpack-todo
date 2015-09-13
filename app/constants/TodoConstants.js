@@ -9,9 +9,9 @@
  * TodoConstants
  */
 
-var keyMirror = require('keymirror');
+import keyMirror from 'keymirror';
 
-module.exports = keyMirror({
+export default keyMirror({
   TODO_CREATE: null,
   TODO_COMPLETE: null,
   TODO_DESTROY: null,
