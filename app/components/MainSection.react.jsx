@@ -22,11 +22,11 @@ export default class MainSection extends React.Component {
       active: x=>!x.done
     };
     this.state = {
-      timestamp: props.timestamp,
-      range: 0,
-      todos: [],
+      range: this.props.todos.length,
+      todos: this.props.todos,
       filter: this.filters.all
     };
+    console.log('mainSect:ctor => ' + JSON.stringify(this.state));
   }
 
   _changeFilter(filter){
@@ -35,35 +35,32 @@ export default class MainSection extends React.Component {
     });
   }
 
-  _updateState(model) {
-    model.getValue("todos.length")
-        .then(len => {
-          this.setState({range:len})
-          return len-1;
-        }).then(range=>model.get(`todos[0..${range}].done`))
-        .then(res=>this.setState({
-          timestamp: new Date().getTime(),
-          todos: res.json.todos
-        }))
+  _updateState(props) {
+    this.setState({
+      range: props.todos.length,
+      todos: props.todos
+    });
   }
 
   componentDidMount() {
-    this._updateState(this.props.model);
+    console.log('mainSect:componentDidMount');
+    this._updateState(this.props);
   }
 
   componentWillReceiveProps(nextProps) {
-    this._updateState(nextProps.model);
+    console.log('mainSect:componentWillReceiveProps');
+    this._updateState(nextProps);
   }
 
   /**
    * @return {object}
    */
   render() {
-    let todoList = fjs.toArray(this.state.todos)
+    let todoList = this.state.todos
         .filter(x=>this.state.filter(x[1]))
         .map((todo,idx)=> {
           console.log('todo=> id:' + todo[0] + ' item:' + JSON.stringify(todo[1]));
-          return (<TodoItem todoid={todo[0]} key={todo[0]} model={this.props.model} timestamp={this.state.timestamp}/>)
+          return (<TodoItem todoid={todo[0]} key={todo[0]} name={todo[1].name} done={todo[1].done} />)
         })
 
     return (
@@ -81,6 +78,6 @@ export default class MainSection extends React.Component {
   };
 }
 MainSection.propTypes = {
-  model: React.PropTypes.object.isRequired
+  todos: React.PropTypes.array.isRequired
 };
 

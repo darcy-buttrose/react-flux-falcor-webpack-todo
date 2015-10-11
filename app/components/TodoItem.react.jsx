@@ -15,57 +15,44 @@ import classNames from 'classnames';
 export default class TodoItem extends React.Component {
 
   constructor(props) {
-      super(props);
+    super(props);
     this.state = {
-      timestamp: props.timestamp,
-      todoid: props.todoid,
-      todo: {
-        name: '',
-        done: false
-      },
+      id: props.todoid,
+      name: props.name,
+      done: props.done,
       isEditing: props.isEditing || false
     }
   }
 
-  _updateState(model) {
-    model.get(`todos[${this.props.todoid}]["name","done"]`)
-        .then((res) => {
-          console.log('todo=> ' + JSON.stringify(res));
-          let storeTodo = res.json.todos[this.props.todoid];
-          let newTodo = {
-            id: this.state.todoid,
-            name: storeTodo.name,
-            done: storeTodo.done
-          }
-          this.setState({
-            timestamp: new Date().getTime(),
-            todo: newTodo
-          });
-          console.log('state=> ' + JSON.stringify(this.state));
-        })
+  _updateState(props) {
+    this.setState({
+      id: props.todoid,
+      name: props.name,
+      done: props.done,
+    });
   }
 
   componentDidMount() {
-    this._updateState(this.props.model);
+    console.log('todoItem:componentDidMount');
+    this._updateState(this.props);
   }
 
   componentWillReceiveProps(nextProps) {
-    this._updateState(nextProps.model);
+    console.log('todoItem:componentWillReceiveProps');
+    this._updateState(nextProps);
   }
 
   /**
    * @return {object}
    */
   render() {
-    var todo = this.state.todo;
-
     var input;
     if (this.state.isEditing) {
       input =
         <TodoTextInput
           className="edit"
           onSave={this._onSave.bind(this)}
-          value={todo.text}
+          value={this.state.name}
         />;
     }
 
@@ -77,19 +64,19 @@ export default class TodoItem extends React.Component {
     return (
       <li
         className={classNames({
-          'completed': todo.done,
+          'completed': this.state.done,
           'editing': this.state.isEditing
         })}
-        key={todo.id}>
+        key={this.state.id}>
         <div className="view">
           <input
             className="toggle"
             type="checkbox"
-            checked={todo.done}
+            checked={this.state.done}
             onChange={this._onToggleComplete.bind(this)}
           />
           <label onDoubleClick={this._onDoubleClick.bind(this)}>
-            {todo.name}
+            {this.state.name}
           </label>
           <button className="destroy" onClick={this._onDestroyClick.bind(this)} />
         </div>
@@ -99,7 +86,7 @@ export default class TodoItem extends React.Component {
   };
 
   _onToggleComplete() {
-    TodoActions.toggleComplete(this.state.todo);
+    TodoActions.toggleComplete(this.state);
   };
 
   _onDoubleClick() {
@@ -113,16 +100,17 @@ export default class TodoItem extends React.Component {
    * @param  {string} text
    */
   _onSave(text) {
-    TodoActions.updateText(this.state.todo.id, text);
+    TodoActions.updateText(this.state.id, text);
     this.setState({isEditing: false});
   };
 
   _onDestroyClick() {
-    TodoActions.destroy(this.state.todo.id);
+    TodoActions.destroy(this.state.id);
   };
 
 }
 TodoItem.propTypes = {
-  model: React.PropTypes.object.isRequired,
-  todoid: React.PropTypes.object.isRequired
+  todoid: React.PropTypes.string.isRequired,
+  name: React.PropTypes.string.isRequired,
+  done: React.PropTypes.bool.isRequired
 };

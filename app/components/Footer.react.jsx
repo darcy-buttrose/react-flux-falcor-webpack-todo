@@ -16,37 +16,16 @@ export default class Footer extends React.Component {
     constructor(props) {
         super(props);
         this.state = {
-          timestamp: props.timestamp,
-          todos: [],
-            total : 0
+          total: this.props.todos.length,
+          todos: this.props.todos,
         }
     }
-
-  _updateState(model) {
-    model.getValue("todos.length")
-        .then(len => {
-          this.setState({total:len})
-          return len-1;
-        }).then(range=>model.get(`todos[0..${range}].done`))
-        .then(res=>this.setState({
-          timestamp: new Date().getTime(),
-          todos: res.json.todos
-        }))
-  }
-
-  componentDidMount() {
-    this._updateState(this.props.model);
-  }
-
-  componentWillReceiveProps(nextProps) {
-    this._updateState(nextProps.model);
-  }
 
   /**
    * @return {object}
    */
   render() {
-    var allTodos = fjs.toArray(this.state.todos);
+    var allTodos = this.state.todos;
     var total = this.state.total;
 
     if (total === 0) {
@@ -91,5 +70,5 @@ export default class Footer extends React.Component {
   };
 }
 Footer.propTypes = {
-  model: React.PropTypes.object.isRequired
+  todos: React.PropTypes.array.isRequired,
 };

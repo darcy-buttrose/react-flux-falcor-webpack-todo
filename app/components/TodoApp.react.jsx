@@ -17,23 +17,39 @@ import Header from './Header.react';
 import MainSection from './MainSection.react';
 import React from 'react';
 import TodoStore from '../stores/TodoStore';
+import fjs from 'functional.js';
 
 export default class TodoApp extends React.Component {
 
   constructor(props) {
     super(props);
-    this.state = this.getTodoState();
+    this.state = {
+      todos: []
+    }
   }
 
-    getTodoState() {
-        return {
-            model: TodoStore.getModel(),
-          timestamp: new Date().getTime()
-        };
-    }
+  _updateState() {
+    let model = TodoStore.getModel();
+    model.getValue("todos.length")
+        .then(len => {
+          console.log('len=' + len);
+          this.setState({range:len})
+          return len-1;
+        })
+        .then(range=>{
+          model.get(`todos[0..${range}].['name','done']`)
+            .then(res=>{
+                console.log('get=> ' + JSON.stringify(res));
+                this.setState({
+                  todos: fjs.toArray(res.json.todos)
+                });
+              })
+        })
+  }
 
   componentDidMount() {
     TodoStore.addChangeListener(this._onChange.bind(this));
+    this._updateState();
   };
 
   componentWillUnmount() {
@@ -44,13 +60,12 @@ export default class TodoApp extends React.Component {
    * @return {object}
    */
   render() {
+    console.log('todoApp:render');
     return (
       <div>
-        <Header  timestamp={this.state.timestamp}/>
-        <MainSection
-          model={this.state.model} timestamp={this.state.timestamp}
-        />
-        <Footer model={this.state.model} timestamp={this.state.timestamp} />
+        <Header />
+        <MainSection todos={this.state.todos}/>
+        <Footer todos={this.state.todos} />
       </div>
     );
   };
@@ -59,7 +74,7 @@ export default class TodoApp extends React.Component {
    * Event handler for 'change' events coming from the TodoStore
    */
   _onChange() {
-    this.setState(this.getTodoState());
+    this._updateState();
   };
 
 }
