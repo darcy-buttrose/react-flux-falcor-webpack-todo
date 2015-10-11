@@ -21,6 +21,23 @@ export default class Footer extends React.Component {
         }
     }
 
+  _updateState(props) {
+    this.setState({
+      total: props.todos.length,
+      todos: props.todos,
+    });
+  }
+
+  componentDidMount() {
+    console.log('footer:componentDidMount');
+    this._updateState(this.props);
+  }
+
+  componentWillReceiveProps(nextProps) {
+    console.log('footer:componentWillReceiveProps');
+    this._updateState(nextProps);
+  }
+
   /**
    * @return {object}
    */

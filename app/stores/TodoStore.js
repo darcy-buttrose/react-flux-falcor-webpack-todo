@@ -64,6 +64,7 @@ let todoModel = new falcor.Model({
 });
 
 function create(text) {
+  console.log('todoStore:create => ' + text);
   let newtodo = {};
   todoModel.getValue("todos.length")
       .then(len => {
@@ -71,11 +72,15 @@ function create(text) {
           name: text,
           done: false
         };
-        newtodo.length = len++;
+        newtodo.length = len+1;
         return newtodo;
       })
       .then(_=>{
-        todoModel.set({json: {todos:newtodo}});
+        console.log('todoStore:create.set => ' + JSON.stringify(newtodo));
+        todoModel.set({json: {todos:newtodo}})
+            .then(res=>{
+              TodoStore.emitChange();
+            });
       });
 }
 
