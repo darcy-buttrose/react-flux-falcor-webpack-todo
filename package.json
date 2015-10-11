@@ -9,8 +9,8 @@
   },
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1",
-    "dev-server": "webpack-dev-server --config webpack-dev-server.config.js --progress --colors --port 8080 --inline",
-    "hot-dev-server": "webpack-dev-server --config webpack-hot-dev-server.config.js --hot --progress --colors --port 8080 --inline",
+    "dev-server": "webpack-dev-server --config webpack.config.js --progress --colors --port 8080 --inline",
+    "hot-dev-server": "webpack-dev-server --config webpack.config.js --hot --progress --colors --port 8080 --inline",
     "build": "webpack --config webpack-production.config.js --progress --profile --colors"
   },
   "keywords": [
@@ -33,8 +33,13 @@
     "css-loader": "^0.14.0",
     "express": "^4.7.2",
     "extract-text-webpack-plugin": "^0.8.0",
+    "falcor": "^0.1.13",
+    "falcor-express": "^0.1.2",
+    "falcor-json-graph": "^2.0.0",
+    "falcor-router": "^0.2.9",
     "file-loader": "^0.8.1",
     "flux": "*",
+    "functional.js": "^0.6.16",
     "html-loader": "^0.3.0",
     "items-store": "^0.7.0",
     "jquery": "^2.1.4",

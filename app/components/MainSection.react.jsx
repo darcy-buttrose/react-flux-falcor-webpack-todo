@@ -10,44 +10,65 @@
 import React from 'react';
 import TodoActions from '../actions/TodoActions';
 import TodoItem from './TodoItem.react';
+import fjs from 'functional.js';
 
 export default class MainSection extends React.Component {
 
-    constructor(props) {
-        super(props);
-        this.state = {
-            allTodos: props.allTodos,
-            areAllComplete: props.areAllComplete
-        }
-    }
+  constructor(props) {
+    super(props);
+    this.filters = {
+      all: x=>true,
+      completed: x=>x.done,
+      active: x=>!x.done
+    };
+    this.state = {
+      timestamp: props.timestamp,
+      range: 0,
+      todos: [],
+      filter: this.filters.all
+    };
+  }
+
+  _changeFilter(filter){
+    this.setState({
+      filter : this.filters[filter]
+    });
+  }
+
+  _updateState(model) {
+    model.getValue("todos.length")
+        .then(len => {
+          this.setState({range:len})
+          return len-1;
+        }).then(range=>model.get(`todos[0..${range}].done`))
+        .then(res=>this.setState({
+          timestamp: new Date().getTime(),
+          todos: res.json.todos
+        }))
+  }
+
+  componentDidMount() {
+    this._updateState(this.props.model);
+  }
+
+  componentWillReceiveProps(nextProps) {
+    this._updateState(nextProps.model);
+  }
 
   /**
    * @return {object}
    */
   render() {
-    // This section should be hidden by default
-    // and shown when there are todos.
-    if (Object.keys(this.state.allTodos).length < 1) {
-      return null;
-    }
-
-    var allTodos = this.state.allTodos;
-    var todos = [];
-
-    for (var key in allTodos) {
-      todos.push(<TodoItem key={key} todo={allTodos[key]} />);
-    }
+    let todoList = fjs.toArray(this.state.todos)
+        .filter(x=>this.state.filter(x[1]))
+        .map((todo,idx)=> {
+          console.log('todo=> id:' + todo[0] + ' item:' + JSON.stringify(todo[1]));
+          return (<TodoItem todoid={todo[0]} key={todo[0]} model={this.props.model} timestamp={this.state.timestamp}/>)
+        })
 
     return (
       <section id="main">
-        <input
-          id="toggle-all"
-          type="checkbox"
-          onChange={this._onToggleCompleteAll.bind(this)}
-          checked={this.state.areAllComplete ? 'checked' : ''}
-        />
-        <label htmlFor="toggle-all">Mark all as complete</label>
-        <ul id="todo-list">{todos}</ul>
+        <ul id="todo-list">{todoList}</ul>
       </section>
     );
   };
@@ -60,7 +81,6 @@ export default class MainSection extends React.Component {
   };
 }
 MainSection.propTypes = {
-  allTodos: React.PropTypes.object.isRequired,
-  areAllComplete: React.PropTypes.bool.isRequired
+  model: React.PropTypes.object.isRequired
 };
 

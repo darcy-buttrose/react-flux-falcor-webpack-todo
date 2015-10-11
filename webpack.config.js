@@ -108,7 +108,7 @@ var loadersByExtension = require("./loadersByExtension");
         module: {
             loaders: loadersByExtension(loaders).concat(loadersByExtension(stylesheetLoaders)).concat(additionalLoaders)
         },
-        devtool: "eval",
+        devtool: "source-map",
         debug: true,
         resolveLoader: {
             root: path.join(__dirname, "node_modules"),

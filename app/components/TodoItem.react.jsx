@@ -17,9 +17,40 @@ export default class TodoItem extends React.Component {
   constructor(props) {
       super(props);
     this.state = {
-      todo: props.todo,
+      timestamp: props.timestamp,
+      todoid: props.todoid,
+      todo: {
+        name: '',
+        done: false
+      },
       isEditing: props.isEditing || false
     }
+  }
+
+  _updateState(model) {
+    model.get(`todos[${this.props.todoid}]["name","done"]`)
+        .then((res) => {
+          console.log('todo=> ' + JSON.stringify(res));
+          let storeTodo = res.json.todos[this.props.todoid];
+          let newTodo = {
+            id: this.state.todoid,
+            name: storeTodo.name,
+            done: storeTodo.done
+          }
+          this.setState({
+            timestamp: new Date().getTime(),
+            todo: newTodo
+          });
+          console.log('state=> ' + JSON.stringify(this.state));
+        })
+  }
+
+  componentDidMount() {
+    this._updateState(this.props.model);
+  }
+
+  componentWillReceiveProps(nextProps) {
+    this._updateState(nextProps.model);
   }
 
   /**
@@ -46,7 +77,7 @@ export default class TodoItem extends React.Component {
     return (
       <li
         className={classNames({
-          'completed': todo.complete,
+          'completed': todo.done,
           'editing': this.state.isEditing
         })}
         key={todo.id}>
@@ -54,11 +85,11 @@ export default class TodoItem extends React.Component {
           <input
             className="toggle"
             type="checkbox"
-            checked={todo.complete}
+            checked={todo.done}
             onChange={this._onToggleComplete.bind(this)}
           />
           <label onDoubleClick={this._onDoubleClick.bind(this)}>
-            {todo.text}
+            {todo.name}
           </label>
           <button className="destroy" onClick={this._onDestroyClick.bind(this)} />
         </div>
@@ -92,5 +123,6 @@ export default class TodoItem extends React.Component {
 
 }
 TodoItem.propTypes = {
-  todo: React.PropTypes.object.isRequired
+  model: React.PropTypes.object.isRequired,
+  todoid: React.PropTypes.object.isRequired
 };

@@ -27,8 +27,8 @@ export default class TodoApp extends React.Component {
 
     getTodoState() {
         return {
-            allTodos: TodoStore.getAll(),
-            areAllComplete: TodoStore.areAllComplete()
+            model: TodoStore.getModel(),
+          timestamp: new Date().getTime()
         };
     }
 
@@ -46,12 +46,11 @@ export default class TodoApp extends React.Component {
   render() {
     return (
       <div>
-        <Header />
+        <Header  timestamp={this.state.timestamp}/>
         <MainSection
-          allTodos={this.state.allTodos}
-          areAllComplete={this.state.areAllComplete}
+          model={this.state.model} timestamp={this.state.timestamp}
         />
-        <Footer allTodos={this.state.allTodos} />
+        <Footer model={this.state.model} timestamp={this.state.timestamp} />
       </div>
     );
   };

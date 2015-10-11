@@ -41,7 +41,7 @@ var TodoActions = {
    */
   toggleComplete: function(todo) {
     var id = todo.id;
-    var actionType = todo.complete ?
+    var actionType = todo.done ?
         TodoConstants.TODO_UNDO_COMPLETE :
         TodoConstants.TODO_COMPLETE;
 

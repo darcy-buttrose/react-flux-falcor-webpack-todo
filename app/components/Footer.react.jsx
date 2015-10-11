@@ -9,33 +9,51 @@
 
 import React from 'react';
 import TodoActions from '../actions/TodoActions';
+import fjs from 'functional.js';
 
 export default class Footer extends React.Component {
 
     constructor(props) {
         super(props);
         this.state = {
-            allTodos : props.allTodos,
-            total : Object.keys(props.allTodos).length
+          timestamp: props.timestamp,
+          todos: [],
+            total : 0
         }
     }
+
+  _updateState(model) {
+    model.getValue("todos.length")
+        .then(len => {
+          this.setState({total:len})
+          return len-1;
+        }).then(range=>model.get(`todos[0..${range}].done`))
+        .then(res=>this.setState({
+          timestamp: new Date().getTime(),
+          todos: res.json.todos
+        }))
+  }
+
+  componentDidMount() {
+    this._updateState(this.props.model);
+  }
+
+  componentWillReceiveProps(nextProps) {
+    this._updateState(nextProps.model);
+  }
+
   /**
    * @return {object}
    */
   render() {
-    var allTodos = this.state.allTodos;
+    var allTodos = fjs.toArray(this.state.todos);
     var total = this.state.total;
 
     if (total === 0) {
       return null;
     }
 
-    var completed = 0;
-    for (var key in allTodos) {
-      if (allTodos[key].complete) {
-        completed++;
-      }
-    }
+    var completed = allTodos.reduce((prev,curr)=>{if (curr.done){prev++} return prev;},0);
 
     var itemsLeft = total - completed;
     var itemsLeftPhrase = itemsLeft === 1 ? ' item ' : ' items ';
@@ -73,5 +91,5 @@ export default class Footer extends React.Component {
   };
 }
 Footer.propTypes = {
-  allTodos: React.PropTypes.object.isRequired
+  model: React.PropTypes.object.isRequired
 };
