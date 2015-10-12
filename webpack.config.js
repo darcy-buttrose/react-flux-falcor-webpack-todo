@@ -6,10 +6,12 @@ var webpack = require("webpack");
 var ExtractTextPlugin = require("extract-text-webpack-plugin");
 var StatsPlugin = require("stats-webpack-plugin");
 var loadersByExtension = require("./loadersByExtension");
+var HtmlWebpackPlugin = require('html-webpack-plugin');
 
 
     var entry = [
         "bootstrap-webpack!./bootstrap.config.js",
+       "webpack-hot-middleware/client?reload=true",
         "./app/entry.jsx"
     ];
     var loaders = {
@@ -29,7 +31,7 @@ var loadersByExtension = require("./loadersByExtension");
         "html": "html-loader",
         "md|markdown": ["html-loader", "markdown-loader"]
     };
-    var cssLoader = "css-loader?module";
+    var cssLoader = "css-loader";
     var stylesheetLoaders = {
         "css": cssLoader,
         "less": [cssLoader, "less-loader"],
@@ -61,8 +63,7 @@ var loadersByExtension = require("./loadersByExtension");
     var extensions = ["", ".web.js", ".js", ".jsx"];
     var root = path.join(__dirname, "app");
     var output = {
-        path: path.join(__dirname, "build"),
-        publicPath: "/_assets/",
+        path: path.join(__dirname, "dist"),
         filename: "[name].js",
         chunkFilename: "[name].js",
         sourceMapFilename: "debugging/[file].map",
@@ -73,16 +74,27 @@ var loadersByExtension = require("./loadersByExtension");
         /node_modules[\\\/]items-store[\\\/]/
     ];
     var plugins = [
+        new HtmlWebpackPlugin({
+            template: 'app/index.tpl.html',
+            inject: 'body',
+            filename: 'index.html'
+        }),
         new webpack.ProvidePlugin({
             $: "jquery",
             jQuery: "jquery",
             "window.jQuery": "jquery",
             "root.jQuery": "jquery"
         }),
+        new webpack.optimize.OccurenceOrderPlugin(),
+        new webpack.HotModuleReplacementPlugin(),
+        new webpack.NoErrorsPlugin(),
+        new webpack.DefinePlugin({
+            'process.env.NODE_ENV': JSON.stringify('development')
+        }),
         new webpack.PrefetchPlugin("react"),
         new webpack.PrefetchPlugin("react/lib/ReactComponentBrowserEnvironment")
     ];
-    plugins.push(new StatsPlugin(path.join(__dirname, "build", "stats.json"), {
+    plugins.push(new StatsPlugin(path.join(__dirname, "dist", "stats.json"), {
         chunkModules: true,
         exclude: excludeFromStats
     }));

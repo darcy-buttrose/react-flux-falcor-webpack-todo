@@ -10,6 +10,9 @@
 import React from 'react';
 import TodoApp from './components/TodoApp.react';
 
+import '../css/base.css';
+import '../css/app.css';
+
 React.render(
   <TodoApp/>,
   document.getElementById('content')

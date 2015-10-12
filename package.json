@@ -9,9 +9,10 @@
   },
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1",
+    "start": "babel-node server",
+    "build": "webpack --config webpack-production.config.js --progress --profile --colors",
     "dev-server": "webpack-dev-server --config webpack.config.js --progress --colors --port 8080 --inline",
-    "hot-dev-server": "webpack-dev-server --config webpack.config.js --hot --progress --colors --port 8080 --inline",
-    "build": "webpack --config webpack-production.config.js --progress --profile --colors"
+    "hot-dev-server": "webpack-dev-server --config webpack.config.js --hot --progress --colors --port 8080 --inline"
   },
   "keywords": [
     "webpack",
@@ -26,10 +27,11 @@
     "async": "^1.2.0",
     "babel-core": "^5.0.12",
     "babel-loader": "^5.0.0",
-    "body-parser": "^1.9.3",
+    "body-parser": "^1.14.1",
     "bootstrap": "^3.3.5",
     "bootstrap-webpack": "0.0.3",
     "classnames": "^2.1.3",
+    "cookie-parser": "^1.4.0",
     "css-loader": "^0.14.0",
     "express": "^4.7.2",
     "extract-text-webpack-plugin": "^0.8.0",
@@ -41,6 +43,7 @@
     "flux": "*",
     "functional.js": "^0.6.16",
     "html-loader": "^0.3.0",
+    "html-webpack-plugin": "^1.6.2",
     "items-store": "^0.7.0",
     "jquery": "^2.1.4",
     "keymirror": "^0.1.1",
@@ -61,7 +64,9 @@
     "url-loader": "^0.5.5",
     "uuid": "^2.0.1",
     "webpack": "^1.8.5",
-    "webpack-dev-server": "^1.4.7"
+    "webpack-dev-middleware": "^1.2.0",
+    "webpack-dev-server": "^1.4.7",
+    "webpack-hot-middleware": "^2.4.1"
   },
   "devDependencies": {
     "babel-eslint": "^3.0.1",
