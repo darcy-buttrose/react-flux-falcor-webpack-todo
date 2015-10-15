@@ -7,14 +7,18 @@ import webpackHotMiddleware from 'webpack-hot-middleware';
 import config from './webpack.config.js';
 
 import falcorExpress from 'falcor-express';
-import router from 'falcor-router';
 
 import cookieParser from 'cookie-parser';
 import bodyParser from 'body-parser';
 
+import todoRouter from './todo-router';
+
 const isDeveloping = process.env.NODE_ENV !== 'production';
 const port = isDeveloping ? 3000 : process.env.PORT;
 const app = express();
+
+app.use(bodyParser.urlencoded({extended: false}));
+app.use('/model.json',falcorExpress.dataSourceRoute(() => new todoRouter()));
 
 app.use(express.static(__dirname + '/dist'));
 

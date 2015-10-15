@@ -14,6 +14,7 @@ import EventEmitter from 'events';
 import TodoConstants from '../constants/TodoConstants';
 import assign from 'object-assign';
 import falcor from 'falcor';
+import falcorDataSource from 'falcor-http-datasource';
 
 var CHANGE_EVENT = 'change';
 
@@ -44,23 +45,7 @@ var TodoStore = assign({}, EventEmitter.prototype, {
 export default TodoStore;
 
 let todoModel = new falcor.Model({
-  cache : {
-    todos: {
-      length: 3,
-      0: {
-        name: 'get milk from corner store',
-        done: false
-      },
-      1: {
-        name: 'froth milk',
-        done: false
-      },
-      2: {
-        name: 'make coffee',
-        done: false
-      }
-    }
-  }
+  source: new falcorDataSource('/model.json')
 });
 
 function create(text) {
