@@ -51,19 +51,24 @@ const TodoRouterBase = router.createClass([{
         set: (jsonGraphArg) => {
 
             console.log('todoRouter[set] => ' + JSON.stringify(jsonGraphArg));
-            console.log('todoRouter[set] => todosUpdate=' + JSON.stringify(jsonGraphArg['todos']));
+            var jsonGraphArg2 = jsonGraphArg['todos'];
+            console.log('todoRouter[set] => todosUpdate=' + JSON.stringify(jsonGraphArg2));
 
-            return _.map(jsonGraphArg['todos'],(todo,id) => {
+            var results = [];
+
+            _.each(jsonGraphArg2,(todo,id) => {
                 console.log('todoRouter[set return] => id=' + id);
-                return _.map(todo,(val,prop) => {
+                _.each(todo,(val,prop) => {
                     console.log('todoRouter[set return] => key=' + prop + ' value=' + val);
                     todos[id][prop] = val;
-                    return {
+                    results.push({
                         path: ['todos',id,prop],
                         value: val
-                    };
+                    });
                 });
             });
+            console.log('todoRouter[set return] => ' + JSON.stringify(results));
+            return results;
         }
     }
 ]);
